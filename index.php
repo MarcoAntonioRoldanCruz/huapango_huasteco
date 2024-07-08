@@ -10,6 +10,9 @@
     <!-- Bootstrap CSS v5.2.1 -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="icons/bootstrap-icons.css">
+
+    <script src="js/sweetalert2.all.min.js"></script>
+    <script src="js/principal.js"></script>
 </head>
 
 <body>
@@ -33,7 +36,7 @@
 
     <div class="container-fluid mb-3 p-3">
         <!-- FORMULARIO registro de participantes -->
-        <form method="post" class="has-validation">
+        <form id="registro" name="registro" method="post" class="was-validated">
 
             <div class="accordion" id="Registro_concursantes">
                 <!-- DATOS personales de la pareja concursante -->
@@ -52,22 +55,22 @@
                                 <div class="row">
                                     <div class="col-8">
                                         <label for="nombre_completo_participante" class="form-label">Nombre completo de participante:</label>
-                                        <input type="text" class="form-control" id="nombre_completo_participante" required />
+                                        <input type="text" class="form-control" id="nombre_completo_participante" name="nombre_completo_participante" required />
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_participante" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_participante" required />
+                                        <input type="date" class="form-control" id="fecha_nac_participante" name="fecha_nac_participante" required />
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-8">
                                         <label for="nombre_completo_pareja" class="form-label">Nombre completo de pareja:</label>
-                                        <input type="text" class="form-control" id="nombre_completo_pareja" required />
+                                        <input type="text" class="form-control" id="nombre_completo_pareja" name="nombre_completo_pareja" required />
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_pareja" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_pareja" required />
+                                        <input type="date" class="form-control" id="fecha_nac_pareja" name="fecha_nac_pareja" required />
                                     </div>
                                 </div>
 
@@ -83,9 +86,9 @@
                                         <label for="grupo_pareja" class="form-label">Grupo, institución que representa, o pareja independiente</label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-text">
-                                                <input id="grupo_pareja_id" class="form-check-input mt-0" type="checkbox" value="">
+                                                <input id="grupo_pareja_id" name="grupo_pareja_id" class="form-check-input mt-0" type="checkbox" onchange="pareja_independiente()">
                                             </div>
-                                            <input id="grupo_pareja" type="text" class="form-control" placeholder="Pareja independiente" required>
+                                            <input id="grupo_pareja" name="grupo_pareja" type="text" class="form-control" placeholder="Pareja independiente" required>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +101,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="curp_participante">
+                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="curp_participante" name="curp_participante">
                                             <label class="form-check-label" for="curp_participante">
                                                 CURP
                                             </label>
@@ -106,7 +109,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="acta_participante">
+                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="acta_participante" name="acta_participante">
                                             <label class="form-check-label" for="acta_participante">
                                                 Acta de nacimiento
                                             </label>
@@ -114,7 +117,7 @@
                                     </div>
                                     <div class="col align-content-center border-dark">
                                         <div class="form-check">
-                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="ine_participante">
+                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="ine_participante" name="ine_participante">
                                             <label class="form-check-label" for="ine_participante">
                                                 INE
                                             </label>
@@ -122,7 +125,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="fotografias_participante">
+                                            <input name="documentos_participante" class="form-check-input" type="checkbox" id="fotografias_participante" name="fotografias_participante">
                                             <label class="form-check-label" for="fotografias_participante">
                                                 Fotografías T/Infantil
                                             </label>
@@ -138,7 +141,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="curp_pareja">
+                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="curp_pareja" name="curp_pareja">
                                             <label class="form-check-label" for="curp_pareja">
                                                 CURP
                                             </label>
@@ -146,7 +149,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="acta_pareja">
+                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="acta_pareja" name="acta_pareja">
                                             <label class="form-check-label" for="acta_pareja">
                                                 Acta de nacimiento
                                             </label>
@@ -154,7 +157,7 @@
                                     </div>
                                     <div class="col align-content-center border-dark">
                                         <div class="form-check">
-                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="ine_pareja">
+                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="ine_pareja" name="ine_pareja">
                                             <label class="form-check-label" for="ine_pareja">
                                                 INE
                                             </label>
@@ -162,7 +165,7 @@
                                     </div>
                                     <div class="col align-content-center">
                                         <div class="form-check">
-                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="fotografias_pareja">
+                                            <input name="documentos_pareja" class="form-check-input" type="checkbox" id="fotografias_pareja" name="fotografias_pareja">
                                             <label class="form-check-label" for="fotografias_pareja">
                                                 Fotografías T/Infantil
                                             </label>
@@ -246,8 +249,8 @@
 
                                 <div class="row">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Número de pareja concursante</label>
-                                        <input type="number" class="form-control fw-bold" name="" id="" aria-describedby="helpId" placeholder="144" />
+                                        <label for="numero_pareja" class="form-label">Número de pareja concursante</label>
+                                        <input type="number" class="form-control fw-bold" name="numero_pareja" id="numero_pareja" aria-describedby="helpId" placeholder="144" />
                                     </div>
                                 </div>
 
@@ -261,7 +264,7 @@
                                     </div>
                                     <div class="col">
                                         <div class="text-center">
-                                            <button type="button" class="btn btn-success">
+                                            <button onclick="confirmar()" type="button" class="btn btn-success">
                                                 Confirmar e imprimir
                                             </button>
                                         </div>
@@ -271,7 +274,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- TERMINA concurso -->
+                <!-- TERMINA concurso datos de registro -->
             </div>
         </form>
     </div>
