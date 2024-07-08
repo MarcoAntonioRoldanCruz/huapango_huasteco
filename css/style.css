@@ -1,0 +1,15 @@
+/* body {
+    
+} */
+
+/* Carrusel */
+/* La clase .img_center centra las imagenes del carrusel a la capa div que funge como contenedor */
+/* No es directamente a la imagen, sino a un precontenedor en ella */
+.img_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+    /* Altura total de la ventana */
+}
+/* Aqui termina carrusel */
