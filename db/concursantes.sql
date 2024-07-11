@@ -49,8 +49,8 @@ CREATE TABLE `concursantes` (
   `estilo` varchar(150) NOT NULL,
   `numero_pareja` varchar(20) NOT NULL,
   `estatus_valido` int(11) NOT NULL,
-  `bloque_inicial` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `bloque_inicial` varchar(20) DEFAULT NULL
+);
 
 --
 -- Índices para tablas volcadas

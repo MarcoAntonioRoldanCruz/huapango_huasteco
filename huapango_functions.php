@@ -10,11 +10,11 @@ $username = "root";
 $password = "";
 $dbname = "huapango_bd";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$pdo = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($pdo->connect_error) {
+    die("Connection failed: " . $pdo->connect_error);
 }
 
 // var_dump($_POST);
@@ -22,6 +22,8 @@ if ($conn->connect_error) {
 // Procesar formulario cuando se presiona el botón "Confirmar"
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id_registro = (isset($_POST['id_registro'])) ? $_POST['id_registro'] : "0";
+
     $nombre_completo_participante = $_POST["nombre_completo_participante"];
     $fecha_nacimiento_participante = $_POST["fecha_nac_participante"];
     $nombre_completo_pareja = $_POST["nombre_completo_pareja"];
@@ -36,58 +38,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $acta_nac_pareja = $_POST["acta_pareja"] ? 1 : 0;
     $ine_pareja = $_POST["ine_pareja"] ? 1 : 0;
     $fotografia_pareja = $_POST["fotografias_pareja"] ? 1 : 0;
-    $nombre_completo_tutor = $_POST["nombre_tutor"];
+    $nombre_completo_tutor = $_POST["nombre_completo_tutor"];
     $telefono_tutor = $_POST["telefono_tutor"];
     $categoria = $_POST["categoria"];
     $estilo = $_POST["estilo"];
     $numero_pareja = $_POST["numero_pareja"];
 
-    $sql = "INSERT INTO concursantes (
-        nombre_completo_participante,
-        fecha_nacimiento_participante,
-        nombre_completo_pareja,
-        fecha_nacimiento_pareja,
-        telefono_contacto,
-        representacion,
-        curp_participante,
-        acta_nac_participante,
-        ine_participante,
-        fotografia_participante,
-        curp_pareja,
-        acta_nac_pareja,
-        ine_pareja,
-        fotografia_pareja,
-        nombre_completo_tutor,
-        telefono_tutor,
-        categoria,
-        estilo,
-        numero_pareja
-    ) VALUES (
-        '$nombre_completo_participante',
-        '$fecha_nacimiento_participante',
-        '$nombre_completo_pareja',
-        '$fecha_nacimiento_pareja',
-        '$telefono_contacto',
-        '$representacion',
-        '$curp_participante',
-        '$acta_nac_participante',
-        '$ine_participante',
-        '$fotografia_participante',
-        '$curp_pareja',
-        '$acta_nac_pareja',
-        '$ine_pareja',
-        '$fotografia_pareja',
-        '$nombre_completo_tutor',
-        '$telefono_tutor',
-        '$categoria',
-        '$estilo',
-        '$numero_pareja'
-    )";
+    if ($id_registro == 0) {
+        $sql = "INSERT INTO concursantes (
+            nombre_completo_participante,
+            fecha_nacimiento_participante,
+            nombre_completo_pareja,
+            fecha_nacimiento_pareja,
+            telefono_contacto,
+            representacion,
+            curp_participante,
+            acta_nac_participante,
+            ine_participante,
+            fotografia_participante,
+            curp_pareja,
+            acta_nac_pareja,
+            ine_pareja,
+            fotografia_pareja,
+            nombre_completo_tutor,
+            telefono_tutor,
+            categoria,
+            estilo,
+            numero_pareja,
+            estatus_valido
+        ) VALUES (
+            '$nombre_completo_participante',
+            '$fecha_nacimiento_participante',
+            '$nombre_completo_pareja',
+            '$fecha_nacimiento_pareja',
+            '$telefono_contacto',
+            '$representacion',
+            '$curp_participante',
+            '$acta_nac_participante',
+            '$ine_participante',
+            '$fotografia_participante',
+            '$curp_pareja',
+            '$acta_nac_pareja',
+            '$ine_pareja',
+            '$fotografia_pareja',
+            '$nombre_completo_tutor',
+            '$telefono_tutor',
+            '$categoria',
+            '$estilo',
+            '$numero_pareja',
+            '1'
+        )";
+    } else {
+        $sql = "UPDATE concursantes SET
+        nombre_completo_participante = '$nombre_completo_participante',
+        fecha_nacimiento_participante = '$fecha_nacimiento_participante',
+        nombre_completo_pareja = '$nombre_completo_pareja',
+        fecha_nacimiento_pareja = '$fecha_nacimiento_pareja',
+        telefono_contacto = '$telefono_contacto',
+        representacion = '$representacion',
+        curp_participante = '$curp_participante',
+        acta_nac_participante = '$acta_nac_participante',
+        ine_participante = '$ine_participante',
+        fotografia_participante = '$fotografia_participante',
+        curp_pareja = '$curp_pareja',
+        acta_nac_pareja = '$acta_nac_pareja',
+        ine_pareja = '$ine_pareja',
+        fotografia_pareja = '$fotografia_pareja',
+        nombre_completo_tutor = '$nombre_completo_tutor',
+        telefono_tutor = '$telefono_tutor',
+        categoria = '$categoria',
+        estilo = '$estilo',
+        numero_pareja = '$numero_pareja'
+        estatus_valido = '1'
+    WHERE id_registro = '$id_registro'";
+    }
 
-    if ($conn->query($sql) === TRUE) {
+    // echo $sql;
+    // die;
+    // return;
+    if ($pdo->query($sql) === TRUE) {
         echo "OK";
 
-        
+
         // Ruta a la plantilla de Excel
         $templatePath = 'registro_template.xlsx';
 
@@ -104,17 +136,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sheet->setCellValue('E17', $representacion);
 
         $documentos_concursante = "";
-        ($curp_participante == "1") ? $documentos_concursante ."CURP " : $documentos_concursante . " ";
-        ($acta_nac_participante == "1") ? $documentos_concursante ."A.N. " : $documentos_concursante . " ";
-        ($ine_participante == "1") ? $documentos_concursante ."INE " : $documentos_concursante . " ";
+        if ($curp_participante == "1") {
+            $documentos_concursante .= "CURP ";
+        }
+        if ($acta_nac_participante == "1") {
+            $documentos_concursante .= "A.N. ";
+        }
+        if ($ine_participante == "1") {
+            $documentos_concursante .= "INE ";
+        }
+        if ($fotografia_participante == "1") {
+            $documentos_concursante .= "Foto ";
+        }
         $sheet->setCellValue('E18', $documentos_concursante);
 
         $documentos_pareja = "";
-        ($curp_pareja == "1") ? $documentos_pareja ."CURP " : $documentos_pareja . " ";
-        ($acta_nac_pareja == "1") ? $documentos_pareja ."A.N. " : $documentos_pareja . " ";
-        ($ine_pareja == "1") ? $documentos_pareja ."INE " : $documentos_pareja . " ";
-
+        if ($curp_pareja == "1") {
+            $documentos_pareja .= "CURP ";
+        }
+        if ($acta_nac_pareja == "1") {
+            $documentos_pareja .= "A.N. ";
+        }
+        if ($ine_pareja == "1") {
+            $documentos_pareja .= "INE ";
+        }
+        if ($fotografia_pareja == "1") {
+            $documentos_pareja .= "Foto ";
+        }
         $sheet->setCellValue('E19', $documentos_pareja);
+
         $sheet->setCellValue('E23', $nombre_completo_tutor);
         $sheet->setCellValue('E24', $telefono_tutor);
         $sheet->setCellValue('E27', $categoria);
@@ -132,13 +182,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         // header('Content-Disposition: attachment; filename="registro.xlsx"');
         // readfile($outputPath);
-        //*/
-
+        // */
     } else {
         // echo "Error: ";
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $sql . "<br>" . $pdo->error;
     }
 }
 
-$conn->close();
+// $pdo->close();
 //*/

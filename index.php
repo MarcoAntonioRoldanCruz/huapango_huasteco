@@ -9,9 +9,12 @@
 
     <!-- Bootstrap CSS v5.2.1 -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="icons/bootstrap-icons.css">
 
     <script src="js/sweetalert2.all.min.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script src="js/principal.js"></script>
 </head>
 
@@ -54,12 +57,14 @@
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-8">
+                                        <input type="hidden" class="form-control" name="id_registro" id="id_registro" value="0" />
+
                                         <label for="nombre_completo_participante" class="form-label">Nombre completo de participante:</label>
                                         <input type="text" class="form-control" id="nombre_completo_participante" name="nombre_completo_participante" required />
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_participante" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_participante" name="fecha_nac_participante" required onchange="categoria_calcular()" />
+                                        <input type="date" class="form-control" id="fecha_nac_participante" name="fecha_nac_participante" required onblur="categoria_calcular()" />
                                     </div>
                                 </div>
 
@@ -70,7 +75,7 @@
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_pareja" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_pareja" name="fecha_nac_pareja" required onchange="categoria_calcular()" />
+                                        <input type="date" class="form-control" id="fecha_nac_pareja" name="fecha_nac_pareja" required onblur="categoria_calcular()" />
                                     </div>
                                 </div>
 
@@ -183,7 +188,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tutorCollapse" aria-expanded="false" aria-controls="tutorCollapse">
-                            Datos de padre y/o tutor (categorías: pequeños huapangueritos, infatil y juvenil)
+                            Datos de padre y/o tutor (categorías: pequeños huapangueritos, infantil y juvenil)
                         </button>
                     </h2>
                     <div id="tutorCollapse" class="accordion-collapse collapse" data-bs-parent="#Registro_concursantes">
@@ -192,14 +197,14 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="nombre_tutor" class="form-label">Nombre completo del padre y/o tutor del participante:</label>
-                                            <input type="text" class="form-control" name="nombre_tutor" id="nombre_tutor" aria-describedby="helpId" placeholder="" />
+                                            <label for="nombre_completo_tutor" class="form-label">Nombre completo del padre y/o tutor del participante:</label>
+                                            <input type="text" class="form-control" name="nombre_completo_tutor" id="nombre_completo_tutor" aria-describedby="helpId" placeholder="" />
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label for="telefono_contacto" class="form-label">Teléfono de contacto</label>
-                                            <input type="tel" class="form-control" name="telefono_contacto" id="telefono_contacto" />
+                                            <label for="telefono_tutor" class="form-label">Teléfono de contacto</label>
+                                            <input type="tel" class="form-control" name="telefono_tutor" id="telefono_tutor" />
                                         </div>
                                     </div>
                                 </div>
@@ -283,9 +288,7 @@
 
 
     <!-- Bootstrap JavaScript Libraries -->
-    <script src="js/sweetalert2.all.min.js"></script>
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
+
     <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 

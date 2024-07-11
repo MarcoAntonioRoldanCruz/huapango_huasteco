@@ -1,3 +1,123 @@
+$(function () {
+  $(function () {
+    $("#nombre_completo_participante").autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          type: "POST",
+          url: "buscar_participantes.php",
+          data: {
+            nombre_completo_participante: request.term,
+            accion: "listar_participantes"
+          },
+          dataType: "json",
+          success: function (dataResult) {
+            // console.log(dataResult);
+            response(
+              $.map(dataResult.items, function (item) {
+                // console.log(dataResult.items);
+                return {
+                  id: item.id_registro, // 0 = Clave oficial
+                  label: item.nombre_completo_participante,
+                  value: item.nombre_completo_participante
+                };
+              })
+            );
+          },
+          error: function (xhr) {
+            console.log(xhr.responseText);
+
+            // TOAST de error
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "bottom-end",
+              showConfirmButton: true,
+              timer: 3600,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener("mouseenter", Swal.stopTimer);
+                toast.addEventListener("mouseleave", Swal.resumeTimer);
+              }
+            });
+            Toast.fire({
+              icon: "error",
+              title: "Ha ocurrido un error, informa al programador"
+            });
+            // TERMINA Toast
+          }
+        });
+      },
+      select: function (e, ui) {
+        console.log(ui.item.id);
+
+        $.ajax({
+          type: "POST",
+          url: "buscar_participantes",
+          data: {
+            id_registro: ui.item.id,
+            accion: "buscar_participante"
+          },
+          dataType: "JSON",
+          success: function (response) {
+            // console.log(response); // OK
+            var item = response.item;
+            console.log(item);
+            $("#id_registro").val(item.id_registro);
+            $("#nombre_completo_participante").val(
+              item.nombre_completo_participante
+            );
+            $("#fecha_nac_participante").val(
+              item.fecha_nacimiento_participante
+            );
+            $("#nombre_completo_pareja").val(item.nombre_completo_pareja);
+            $("#fecha_nac_pareja").val(item.fecha_nacimiento_pareja);
+            $("#telefono_contacto").val(item.telefono_contacto);
+            $("#grupo_pareja").val(item.representacion);
+
+            if (item.curp_participante == 1) {
+              $("#curp_participante").prop("checked", true);
+            }
+            if (item.acta_nac_participante == 1) {
+              $("#acta_participante").prop("checked", true);
+            }
+            if (item.ine_participante == 1) {
+              $("#ine_participante").prop("checked", true);
+            }
+            if (item.fotografia_participante == 1) {
+              $("#fotografias_participante").prop("checked", true);
+            }
+            if (item.curp_participante == 1) {
+              $("#curp_participante").prop("checked", true);
+            }
+            if (item.curp_pareja == 1) {
+              $("#curp_pareja").prop("checked", true);
+            }
+            if (item.acta_nac_pareja == 1) {
+              $("#acta_pareja").prop("checked", true);
+            }
+            if (item.ine_pareja == 1) {
+              $("#ine_pareja").prop("checked", true);
+            }
+            if (item.fotografia_pareja == 1) {
+              $("#fotografias_pareja").prop("checked", true);
+            }
+            if (item.curp_pareja == 1) {
+              $("#curp_pareja").prop("checked", true);
+            }
+            $("#nombre_completo_tutor").val(item.nombre_completo_tutor);
+            $("#telefono_tutor").val(item.telefono_tutor);
+            $("#categoria").val(item.categoria);
+            $("#estilo").val(item.estilo);
+            $("#numero_pareja").val(item.numero_pareja);
+          },
+          error: function (xhr) {
+            console.log(xhr.responseText);
+          }
+        });
+      }
+    });
+  });
+});
+
 function confirmar() {
   // Obtener cada valor de los campos del formulario por su ID
   var nombre_completo_participante = $("#nombre_completo_participante").val();
@@ -12,9 +132,7 @@ function confirmar() {
   var curp_participante = $("#curp_participante").is(":checked") ? 1 : 0;
   var acta_participante = $("#acta_participante").is(":checked") ? 1 : 0;
   var ine_participante = $("#ine_participante").is(":checked") ? 1 : 0;
-  var fotografias_participante = $("#fotografias_participante").is(":checked")
-    ? 1
-    : 0;
+  var fotografias_participante = $("#fotografias_participante").is(":checked")? 1 : 0;
 
   // Documentos presentados de la pareja
   var curp_pareja = $("#curp_pareja").is(":checked") ? 1 : 0;
@@ -22,17 +140,19 @@ function confirmar() {
   var ine_pareja = $("#ine_pareja").is(":checked") ? 1 : 0;
   var fotografias_pareja = $("#fotografias_pareja").is(":checked") ? 1 : 0;
 
-  var nombre_tutor = $("#nombre_tutor").val();
-  var telefono_contacto_tutor = $("#telefono_contacto_tutor").val();
+  var nombre_completo_tutor = $("#nombre_completo_tutor").val();
+  var telefono_tutor = $("#telefono_tutor").val();
   var categoria = $("#categoria").val();
   var estilo = $("#estilo").val();
   var numero_pareja = $("#numero_pareja").val();
 
+  var id_registro = $("#id_registro").val();
   // Enviar los datos a través de AJAX
   $.ajax({
     type: "POST",
     url: "huapango_functions.php",
     data: {
+      id_registro: id_registro,
       nombre_completo_participante: nombre_completo_participante,
       fecha_nac_participante: fecha_nac_participante,
       nombre_completo_pareja: nombre_completo_pareja,
@@ -48,8 +168,8 @@ function confirmar() {
       acta_pareja: acta_pareja,
       ine_pareja: ine_pareja,
       fotografias_pareja: fotografias_pareja,
-      nombre_tutor: nombre_tutor,
-      telefono_contacto_tutor: telefono_contacto_tutor,
+      nombre_completo_tutor: nombre_completo_tutor,
+      telefono_tutor: telefono_tutor,
       categoria: categoria,
       estilo: estilo,
       numero_pareja: numero_pareja
@@ -64,6 +184,7 @@ function confirmar() {
           "success"
         );
         window.open("registro.xlsx", "_blank");
+        $("#registro").trigger("reset");
       } else {
         Swal.fire("Error en base de datos", response, "error");
       }
@@ -135,7 +256,6 @@ function categoria_calcular() {
   }
 
   var categoria = "";
-
   if (edad < 7 || (edad === 7 && mes < 0)) {
     categoria = "Pequeños Huapangueritos";
   } else if (edad < 13 || (edad === 13 && mes < 0)) {
@@ -146,7 +266,16 @@ function categoria_calcular() {
     categoria = "Adulto";
   }
 
-  // alert('Edad: ' + edadAnios + ' años, ' + edadMeses + ' meses, ' + edadDias + ' días.\nCategoría: ' + categoria);
+  var title = "";
+  if (fechaParticipante > fechaPareja) {
+    title = "CONCURSANTE ES MAYOR";
+  } else if (fechaPareja > fechaParticipante) {
+    title = "PAREJA ES MAYOR";
+  } else {
+    title = "AMBOS TIENEN LA MISMA EDAD";
+  }
+
+  // alert('Edad: ' edadAnios + 'años, ' edadMeses + 'eses, ' edadDias + 'ías.\nCategoría: ' categoria);
   const Toast = Swal.mixin({
     toast: true,
     position: "bottom-end",
@@ -161,8 +290,8 @@ function categoria_calcular() {
   Toast.fire({
     icon: "info",
     title:
-      "DE LA PERSONA MAYOR.- " +
-      "Edad: " +
+      title +
+      ". Edad: " +
       edadAnios +
       " años, " +
       edadMeses +
