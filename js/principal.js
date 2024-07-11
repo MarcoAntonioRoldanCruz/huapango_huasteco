@@ -63,6 +63,7 @@ function confirmar() {
           "Registro realizado exitosamente",
           "success"
         );
+        window.open("registro.xlsx", "_blank");
       } else {
         Swal.fire("Error en base de datos", response, "error");
       }
@@ -87,4 +88,89 @@ function pareja_independiente() {
   } else {
     $("#grupo_pareja").val("");
   }
+}
+
+function categoria_calcular() {
+  var fechaParticipante = $("#fecha_nac_participante").val();
+  var fechaPareja = $("#fecha_nac_pareja").val();
+  var fechaNacimiento = fechaParticipante || fechaPareja; // Usar la fecha que esté disponible
+
+  if (!fechaNacimiento) {
+    return; // No hacer nada si no hay fecha de nacimiento seleccionada
+  }
+
+  var hoy = new Date();
+  var nacimiento = new Date(fechaNacimiento);
+  var edad = hoy.getFullYear() - nacimiento.getFullYear();
+  var mes = hoy.getMonth() - nacimiento.getMonth();
+
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+
+  // Calcular años
+  var edadAnios = hoy.getFullYear() - nacimiento.getFullYear();
+  var mes = hoy.getMonth() - nacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edadAnios--;
+  }
+
+  // Calcular meses
+  var edadMeses = hoy.getMonth() - nacimiento.getMonth();
+  if (edadMeses < 0) {
+    edadMeses += 12;
+  } else if (hoy.getDate() < nacimiento.getDate()) {
+    edadMeses--;
+  }
+
+  // Calcular días
+  var edadDias = hoy.getDate() - nacimiento.getDate();
+  if (edadDias < 0) {
+    var ultimoDiaMesAnterior = new Date(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      0
+    ).getDate();
+    edadDias += ultimoDiaMesAnterior;
+  }
+
+  var categoria = "";
+
+  if (edad < 7 || (edad === 7 && mes < 0)) {
+    categoria = "Pequeños Huapangueritos";
+  } else if (edad < 13 || (edad === 13 && mes < 0)) {
+    categoria = "Infantil";
+  } else if (edad < 17 || (edad === 17 && mes < 0)) {
+    categoria = "Juvenil";
+  } else {
+    categoria = "Adulto";
+  }
+
+  // alert('Edad: ' + edadAnios + ' años, ' + edadMeses + ' meses, ' + edadDias + ' días.\nCategoría: ' + categoria);
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom-end",
+    showConfirmButton: true,
+    timer: 3600,
+    timerProgressBar: false,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    }
+  });
+  Toast.fire({
+    icon: "info",
+    title:
+      "DE LA PERSONA MAYOR.- " +
+      "Edad: " +
+      edadAnios +
+      " años, " +
+      edadMeses +
+      " meses, " +
+      edadDias +
+      " días.\nCategoría: " +
+      categoria
+  });
+
+  $("#categoria").val(categoria);
 }

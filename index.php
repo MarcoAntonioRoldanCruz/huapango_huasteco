@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_participante" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_participante" name="fecha_nac_participante" required />
+                                        <input type="date" class="form-control" id="fecha_nac_participante" name="fecha_nac_participante" required onchange="categoria_calcular()" />
                                     </div>
                                 </div>
 
@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="col-4">
                                         <label for="fecha_nac_pareja" class="form-label">Fecha de nacimiento</label>
-                                        <input type="date" class="form-control" id="fecha_nac_pareja" name="fecha_nac_pareja" required />
+                                        <input type="date" class="form-control" id="fecha_nac_pareja" name="fecha_nac_pareja" required onchange="categoria_calcular()" />
                                     </div>
                                 </div>
 
@@ -255,18 +255,20 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col">
+                                    <!-- <div class="col">
                                         <div class="text-center">
                                             <button type="button" class="btn btn-primary">
                                                 Sugerir número aleatorio
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col">
                                         <div class="text-center">
                                             <button onclick="confirmar()" type="button" class="btn btn-success">
                                                 Confirmar e imprimir
                                             </button>
+                                            <!-- <input name="confirmar" id="confirmar" class="btn btn-primary" type="submit" value="Confirmar e imprimir" /> -->
+
                                         </div>
                                     </div>
                                 </div>
