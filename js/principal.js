@@ -7,7 +7,7 @@ $(function () {
           url: "buscar_participantes.php",
           data: {
             nombre_completo_participante: request.term,
-            accion: "listar_participantes"
+            accion: "listar_participantes",
           },
           dataType: "json",
           success: function (dataResult) {
@@ -18,7 +18,7 @@ $(function () {
                 return {
                   id: item.id_registro, // 0 = Clave oficial
                   label: item.nombre_completo_participante,
-                  value: item.nombre_completo_participante
+                  value: item.nombre_completo_participante,
                 };
               })
             );
@@ -36,14 +36,14 @@ $(function () {
               didOpen: (toast) => {
                 toast.addEventListener("mouseenter", Swal.stopTimer);
                 toast.addEventListener("mouseleave", Swal.resumeTimer);
-              }
+              },
             });
             Toast.fire({
               icon: "error",
-              title: "Ha ocurrido un error, informa al programador"
+              title: "Ha ocurrido un error, informa al programador",
             });
             // TERMINA Toast
-          }
+          },
         });
       },
       select: function (e, ui) {
@@ -54,7 +54,7 @@ $(function () {
           url: "buscar_participantes",
           data: {
             id_registro: ui.item.id,
-            accion: "buscar_participante"
+            accion: "buscar_participante",
           },
           dataType: "JSON",
           success: function (response) {
@@ -111,9 +111,9 @@ $(function () {
           },
           error: function (xhr) {
             console.log(xhr.responseText);
-          }
+          },
         });
-      }
+      },
     });
   });
 });
@@ -132,7 +132,9 @@ function confirmar() {
   var curp_participante = $("#curp_participante").is(":checked") ? 1 : 0;
   var acta_participante = $("#acta_participante").is(":checked") ? 1 : 0;
   var ine_participante = $("#ine_participante").is(":checked") ? 1 : 0;
-  var fotografias_participante = $("#fotografias_participante").is(":checked")? 1 : 0;
+  var fotografias_participante = $("#fotografias_participante").is(":checked")
+    ? 1
+    : 0;
 
   // Documentos presentados de la pareja
   var curp_pareja = $("#curp_pareja").is(":checked") ? 1 : 0;
@@ -172,7 +174,7 @@ function confirmar() {
       telefono_tutor: telefono_tutor,
       categoria: categoria,
       estilo: estilo,
-      numero_pareja: numero_pareja
+      numero_pareja: numero_pareja,
     },
     success: function (response) {
       console.log(response);
@@ -193,14 +195,14 @@ function confirmar() {
       console.log(error);
       // Mostrar mensaje de error
       Swal.fire("Error fatal", error, "error");
-    }
+    },
   });
 }
 
 function pareja_independiente() {
   var grupo_pareja = $("#grupo_pareja").val();
   var grupo_pareja_id = $("#grupo_pareja_id").prop("checked");
-  console.log(grupo_pareja_id);
+  // console.log(grupo_pareja_id);
 
   if (grupo_pareja_id) {
     if (grupo_pareja == "") {
@@ -214,7 +216,15 @@ function pareja_independiente() {
 function categoria_calcular() {
   var fechaParticipante = $("#fecha_nac_participante").val();
   var fechaPareja = $("#fecha_nac_pareja").val();
-  var fechaNacimiento = fechaParticipante || fechaPareja; // Usar la fecha que esté disponible
+
+  // Convertir las fechas de nacimiento a objetos Date
+  var nacimientoParticipante = fechaParticipante
+    ? new Date(fechaParticipante)
+    : null;
+  var nacimientoPareja = fechaPareja ? new Date(fechaPareja) : null;
+
+  // Usar la fecha que esté disponible
+  var fechaNacimiento = nacimientoParticipante || nacimientoPareja;
 
   if (!fechaNacimiento) {
     return; // No hacer nada si no hay fecha de nacimiento seleccionada
@@ -222,30 +232,32 @@ function categoria_calcular() {
 
   var hoy = new Date();
   var nacimiento = new Date(fechaNacimiento);
-  var edad = hoy.getFullYear() - nacimiento.getFullYear();
-  var mes = hoy.getMonth() - nacimiento.getMonth();
 
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--;
+  // Calcular edad de la persona mayor
+  var mayorNacimiento;
+  if (nacimientoParticipante && nacimientoPareja) {
+    mayorNacimiento =
+      nacimientoParticipante > nacimientoPareja
+        ? nacimientoPareja
+        : nacimientoParticipante;
+  } else {
+    mayorNacimiento = nacimientoParticipante || nacimientoPareja;
   }
 
-  // Calcular años
-  var edadAnios = hoy.getFullYear() - nacimiento.getFullYear();
-  var mes = hoy.getMonth() - nacimiento.getMonth();
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+  var edadAnios = hoy.getFullYear() - mayorNacimiento.getFullYear();
+  var mes = hoy.getMonth() - mayorNacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < mayorNacimiento.getDate())) {
     edadAnios--;
   }
 
-  // Calcular meses
-  var edadMeses = hoy.getMonth() - nacimiento.getMonth();
+  var edadMeses = hoy.getMonth() - mayorNacimiento.getMonth();
   if (edadMeses < 0) {
     edadMeses += 12;
-  } else if (hoy.getDate() < nacimiento.getDate()) {
+  } else if (hoy.getDate() < mayorNacimiento.getDate()) {
     edadMeses--;
   }
 
-  // Calcular días
-  var edadDias = hoy.getDate() - nacimiento.getDate();
+  var edadDias = hoy.getDate() - mayorNacimiento.getDate();
   if (edadDias < 0) {
     var ultimoDiaMesAnterior = new Date(
       hoy.getFullYear(),
@@ -255,27 +267,35 @@ function categoria_calcular() {
     edadDias += ultimoDiaMesAnterior;
   }
 
+  // Determinar categoría
   var categoria = "";
-  if (edad < 7 || (edad === 7 && mes < 0)) {
+  if (edadAnios < 7 || (edadAnios === 7 && edadMeses < 0)) {
     categoria = "Pequeños Huapangueritos";
-  } else if (edad < 13 || (edad === 13 && mes < 0)) {
+  } else if (edadAnios < 13 || (edadAnios === 13 && edadMeses < 0)) {
     categoria = "Infantil";
-  } else if (edad < 17 || (edad === 17 && mes < 0)) {
+  } else if (edadAnios < 17 || (edadAnios === 17 && edadMeses < 0)) {
     categoria = "Juvenil";
   } else {
     categoria = "Adulto";
   }
 
+  // Comparar edades y determinar el título del mensaje
   var title = "";
-  if (fechaParticipante > fechaPareja) {
-    title = "CONCURSANTE ES MAYOR";
-  } else if (fechaPareja > fechaParticipante) {
-    title = "PAREJA ES MAYOR";
+  if (nacimientoParticipante && nacimientoPareja) {
+    if (nacimientoParticipante.getTime() > nacimientoPareja.getTime()) {
+      title = "PAREJA ES MAYOR";
+    } else if (nacimientoPareja.getTime() > nacimientoParticipante.getTime()) {
+      title = "CONCURSANTE ES MAYOR";
+    } else {
+      title = "AMBOS TIENEN LA MISMA EDAD";
+    }
+  } else if (nacimientoParticipante) {
+    title = "SOLO HAY CONCURSANTE";
   } else {
-    title = "AMBOS TIENEN LA MISMA EDAD";
+    title = "SOLO HAY PAREJA";
   }
 
-  // alert('Edad: ' edadAnios + 'años, ' edadMeses + 'eses, ' edadDias + 'ías.\nCategoría: ' categoria);
+  // Mostrar alerta con SweetAlert2
   const Toast = Swal.mixin({
     toast: true,
     position: "bottom-end",
@@ -285,7 +305,7 @@ function categoria_calcular() {
     didOpen: (toast) => {
       toast.addEventListener("mouseenter", Swal.stopTimer);
       toast.addEventListener("mouseleave", Swal.resumeTimer);
-    }
+    },
   });
   Toast.fire({
     icon: "info",
@@ -298,7 +318,7 @@ function categoria_calcular() {
       " meses, " +
       edadDias +
       " días.\nCategoría: " +
-      categoria
+      categoria,
   });
 
   $("#categoria").val(categoria);
